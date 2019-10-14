@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Form</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"
+        integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div id="postOrDelete">
+        <h2>POST New user</h2>
+        <form id="addUserForm">
+            First name:<br>
+            <input type="text" name="firstname" id="fn" required><br>
+            Last name:<br>
+            <input type="text" name="lastname" id="ln" required><br>
+            Email:<br>
+            <input type="email" name="email" id="email"><br>
+            Gender:<br>
+            <input type="radio" name="gender" value="male" class="gender" id="m" checked><label for="m">Male</label><br>
+            <input type="radio" name="gender" value="female" class="gender" id="f"><label for="f">Female</label><br>
+            <input type="radio" name="gender" value="other" class="gender" id="o"><label for="o">Other</label><br><br>
+            <button type="submit" value="submit" id="postBtn">Submit</button><br><br>
+            <a id="dbLink" href="http://localhost:3000/api/users">User database</a>
+        </form>
+        <form>
+            <h2>DELETE user</h2>
+            User ID:<br>
+            <input type="number" name="delete" id="delId" required><br><br>
+            <button type="submit" value="submit" id="delBtn">Delete</button>
+        </form>
+    </div>
+    <div id="userlist">
+        <h2>Users</h2>
+        <ol id="output"></ol><br>
+    </div>
+    <script>
+        var req = new XMLHttpRequest();
+
+        req.onreadystatechange = function () {
+            if (req.readyState === 4) {
+                if (req.status === 200) {
+                    var jsonObj = JSON.parse(req.responseText);
+                    for (var i = 0; i < jsonObj.length; i++) {
+                        var link = $(`<a href="http://localhost:3000/api/users/${jsonObj[i].id}">Name: ${jsonObj[i].firstname} ${jsonObj[i].lastname}, ID: ${jsonObj[i].id}</a>`);
+                        $('<li></li>')
+                            .html(link)
+                            .appendTo('ol');
+                    }
+                } else {
+                    console.log('Error');
+                }
+            }
+        }
+        req.open('GET', 'http://localhost:3000/api/users');
+        req.send();
+
+        var postBtn = document.getElementById('postBtn');
+        var delBtn = document.getElementById('delBtn');
+        var id;
+
+        postBtn.onclick = function (e) {
+            e.preventDefault();
+            var firstN = document.getElementById('fn').value;
+            var lastN = document.getElementById('ln').value;
+            var email = document.getElementById('email').value;
+            var gender = document.querySelector('input[name="gender"]:checked').value;
+
+            data = {
+                "firstname": firstN,
+                "lastname": lastN,
+                "email": email,
+                "gender": gender
+            };
+            postUser();
+        };
+
+        function postUser() {
+            $.ajax({
+                url: 'http://localhost:3000/api/users',
+                type: 'POST',
+                data: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (result) { },
+                error: function (request, msg, error) { }
+            });
+            location.reload();
+        }
+
+        delBtn.onclick = function (e) {
+            e.preventDefault();
+            id = document.getElementById('delId').value;
+            deleteUser(id);
+        };
+
+        function deleteUser(id) {
+            $.ajax({
+                url: 'http://localhost:3000/api/users/' + id,
+                type: 'DELETE',
+                contentType: 'application/json',
+                success: function (result) {
+                },
+                error: function (request, msg, error) {
+                }
+            });
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>

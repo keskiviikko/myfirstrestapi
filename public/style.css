@@ -1,0 +1,31 @@
+div {
+    float: left;
+}
+
+#postOrDelete {
+    margin-left: 10px;
+}
+
+#userlist {
+    margin-left: 110px;
+    padding-right: 10px;
+}
+
+#userlist h2 {
+    text-align: center;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color:blue;
+}
+
+#dbLink {
+    background-color: lightcyan;
+    padding: 5px;
+}
